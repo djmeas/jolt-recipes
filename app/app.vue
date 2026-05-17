@@ -2,10 +2,12 @@
 const { loggedIn, user, clear: clearSession } = useUserSession()
 const config = useRuntimeConfig()
 const siteName = config.public.siteName || 'Jolt Recipes'
+const mobileMenuOpen = ref(false)
 
 async function logout() {
   await $fetch('/api/auth/logout', { method: 'POST' })
   await clearSession()
+  mobileMenuOpen.value = false
   await navigateTo('/recipes')
 }
 </script>
@@ -28,41 +30,86 @@ async function logout() {
           <span class="logo-text">{{ siteName }}</span>
         </NuxtLink>
         <nav class="nav-links">
-          <NuxtLink to="/recipes" class="nav-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            Browse
-          </NuxtLink>
-          <NuxtLink
-            v-if="loggedIn"
-            to="/dashboard"
-            class="nav-link"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            Dashboard
-          </NuxtLink>
-          <NuxtLink
-            v-if="loggedIn"
-            to="/recipes/new"
-            class="nav-cta"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Recipe
-          </NuxtLink>
+          <!-- desktop links always visible -->
+          <div class="desktop-nav">
+            <NuxtLink to="/recipes" class="nav-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              Browse
+            </NuxtLink>
+            <NuxtLink
+              v-if="loggedIn"
+              to="/dashboard"
+              class="nav-link"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              Dashboard
+            </NuxtLink>
+            <NuxtLink
+              v-if="loggedIn"
+              to="/recipes/new"
+              class="nav-cta"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Recipe
+            </NuxtLink>
+            <button
+              v-if="loggedIn"
+              @click="logout"
+              class="nav-link nav-link--subtle"
+            >
+              Sign out
+            </button>
+            <NuxtLink
+              v-if="!loggedIn"
+              to="/login"
+              class="nav-link nav-link--subtle"
+            >
+              Sign in
+            </NuxtLink>
+          </div>
+
+          <!-- mobile hamburger -->
           <button
-            v-if="loggedIn"
-            @click="logout"
-            class="nav-link nav-link--subtle"
+            class="hamburger mobile-only"
+            aria-label="Toggle navigation"
+            @click="mobileMenuOpen = !mobileMenuOpen"
           >
-            Sign out
+            <svg v-if="!mobileMenuOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+            <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
           </button>
-          <NuxtLink
-            v-if="!loggedIn"
-            to="/login"
-            class="nav-link nav-link--subtle"
-          >
-            Sign in
-          </NuxtLink>
         </nav>
+
+        <!-- mobile drawer overlay -->
+        <transition name="drawer">
+          <div v-if="mobileMenuOpen" class="mobile-drawer" @click.self="mobileMenuOpen = false">
+            <div class="mobile-drawer-inner">
+              <NuxtLink to="/recipes" class="drawer-link" @click="mobileMenuOpen = false">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Browse
+              </NuxtLink>
+              <NuxtLink v-if="loggedIn" to="/dashboard" class="drawer-link" @click="mobileMenuOpen = false">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Dashboard
+              </NuxtLink>
+              <NuxtLink v-if="loggedIn" to="/recipes/new" class="drawer-link drawer-link--cta" @click="mobileMenuOpen = false">
+                Add Recipe
+              </NuxtLink>
+              <button v-if="loggedIn" class="drawer-link drawer-link--subtle" @click="logout">
+                Sign out
+              </button>
+              <NuxtLink v-if="!loggedIn" to="/login" class="drawer-link drawer-link--subtle" @click="mobileMenuOpen = false">
+                Sign in
+              </NuxtLink>
+            </div>
+          </div>
+        </transition>
       </div>
     </header>
     <main class="app-main">
@@ -440,4 +487,142 @@ async function logout() {
 .anim-delay-3 { animation-delay: 240ms; }
 .anim-delay-4 { animation-delay: 320ms; }
 .anim-delay-5 { animation-delay: 400ms; }
+
+/* Mobile hamburger & drawer */
+.desktop-nav {
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .desktop-nav { display: flex; }
+}
+
+.mobile-only {
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .mobile-only { display: none; }
+}
+
+.hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.hamburger:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+}
+
+.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.mobile-drawer-inner {
+  width: 70%;
+  max-width: 280px;
+  height: 100%;
+  background: rgba(15, 15, 20, 0.95);
+  border-left: 1px solid var(--border-glass);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 0.5rem;
+}
+
+.drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.drawer-link:hover {
+  background: var(--bg-glass-hover);
+}
+
+.drawer-link--cta {
+  background: var(--accent);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.drawer-link--cta:hover {
+  background: #ff7d4d;
+}
+
+.drawer-link--subtle {
+  background: none;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.drawer-link--subtle:hover {
+  color: var(--text-primary);
+  background: var(--bg-glass);
+}
+
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: opacity 200ms ease;
+}
+
+.drawer-enter-active > .mobile-drawer-inner,
+.drawer-leave-active > .mobile-drawer-inner {
+  transition: transform 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.drawer-enter-from,
+.drawer-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-from > .mobile-drawer-inner,
+.drawer-leave-to > .mobile-drawer-inner {
+  transform: translateX(100%);
+}
+
+.drawer-enter-to,
+.drawer-leave-from {
+  opacity: 1;
+}
+
+.drawer-enter-to > .mobile-drawer-inner,
+.drawer-leave-from > .mobile-drawer-inner {
+  transform: translateX(0);
+}
+
+@media (min-width: 640px) {
+  .mobile-drawer { display: none; }
+}
 </style>
