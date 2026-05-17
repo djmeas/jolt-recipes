@@ -301,7 +301,7 @@ function formatTime(minutes: number | null | undefined) {
   border-radius: 50%;
   background: var(--accent-soft);
   color: var(--accent);
-  border: 1px solid rgba(255, 107, 53, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;

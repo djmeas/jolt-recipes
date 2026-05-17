@@ -104,7 +104,7 @@ const remainingWords = rest.join(' ')
   text-transform: uppercase;
   color: var(--accent);
   background: var(--accent-soft);
-  border: 1px solid rgba(255, 107, 53, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.15);
   margin-bottom: 1.5rem;
 }
 
@@ -166,7 +166,7 @@ const remainingWords = rest.join(' ')
   margin-bottom: 1rem;
   background: var(--accent-soft);
   color: var(--accent);
-  border: 1px solid rgba(255, 107, 53, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.1);
 }
 
 .feature-icon-wrap--rose {

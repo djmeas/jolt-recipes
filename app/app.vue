@@ -126,7 +126,7 @@ async function logout() {
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=SF+Pro+Display:wght@300;400;500;600&display=swap');
 
 :root {
-  --bg-base: #0f0f14;
+  --bg-base: #0c1412;
   --bg-surface: rgba(255, 255, 255, 0.04);
   --bg-glass: rgba(255, 255, 255, 0.06);
   --bg-glass-hover: rgba(255, 255, 255, 0.10);
@@ -138,17 +138,18 @@ async function logout() {
   --text-primary: rgba(255, 255, 255, 0.92);
   --text-secondary: rgba(255, 255, 255, 0.55);
   --text-tertiary: rgba(255, 255, 255, 0.35);
-  --accent: #ff6b35;
-  --accent-soft: rgba(255, 107, 53, 0.15);
-  --accent-glow: rgba(255, 107, 53, 0.3);
-  --rose: #f472b6;
-  --rose-soft: rgba(244, 114, 182, 0.12);
+  --accent: #10b981;
+  --accent-soft: rgba(16, 185, 129, 0.15);
+  --accent-glow: rgba(16, 185, 129, 0.3);
+  --rose: #34d399;
+  --rose-soft: rgba(52, 211, 153, 0.12);
   --destructive: #ef4444;
   --destructive-soft: rgba(239, 68, 68, 0.12);
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-xl: 28px;
+  --accent-hover: #34d399;
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
   --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -176,10 +177,10 @@ async function logout() {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(255, 107, 53, 0.08), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(244, 114, 182, 0.06), transparent 60%),
-    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(139, 92, 246, 0.04), transparent 50%);
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(16, 185, 129, 0.08), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(110, 231, 183, 0.06), transparent 60%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(52, 211, 153, 0.04), transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -288,7 +289,7 @@ async function logout() {
 }
 
 .nav-cta:hover {
-  background: #ff7d4d;
+  background: var(--accent-hover);
   box-shadow: 0 4px 20px var(--accent-glow);
   transform: translateY(-1px);
 }
@@ -407,7 +408,7 @@ async function logout() {
 }
 
 .ios-btn-primary:hover {
-  background: #ff7d4d;
+  background: var(--accent-hover);
   box-shadow: 0 4px 24px var(--accent-glow);
   transform: translateY(-1px);
 }
@@ -449,7 +450,7 @@ async function logout() {
   letter-spacing: 0.02em;
   background: var(--accent-soft);
   color: var(--accent);
-  border: 1px solid rgba(255, 107, 53, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.12);
 }
 
 .tag-pill--rose {
@@ -583,7 +584,7 @@ async function logout() {
 }
 
 .drawer-link--cta:hover {
-  background: #ff7d4d;
+  background: var(--accent-hover);
 }
 
 .drawer-link--subtle {

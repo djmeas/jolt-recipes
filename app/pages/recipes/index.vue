@@ -215,7 +215,7 @@ function formatTime(minutes: number | null | undefined) {
 }
 
 .search-btn:hover {
-  background: #ff7d4d;
+  background: var(--accent-hover);
 }
 
 .filter-group {
