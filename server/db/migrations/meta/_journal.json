@@ -8,6 +8,13 @@
       "when": 1773523392712,
       "tag": "0000_dashing_fallen_one",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1778977391491,
+      "tag": "0001_light_black_panther",
+      "breakpoints": true
     }
   ]
 }
