@@ -101,7 +101,8 @@ async function logout() {
               <NuxtLink v-if="loggedIn" to="/recipes/new" class="drawer-link drawer-link--cta" @click="mobileMenuOpen = false">
                 Add Recipe
               </NuxtLink>
-              <button v-if="loggedIn" class="drawer-link drawer-link--subtle" @click="logout">
+              <button v-if="loggedIn" class="drawer-link" @click="logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 Sign out
               </button>
               <NuxtLink v-if="!loggedIn" to="/login" class="drawer-link drawer-link--subtle" @click="mobileMenuOpen = false">
@@ -533,16 +534,19 @@ async function logout() {
   z-index: 60;
   display: flex;
   justify-content: flex-end;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
 }
 
 .mobile-drawer-inner {
   width: 70%;
   max-width: 280px;
   height: 100%;
-  background: rgba(15, 15, 20, 0.95);
-  border-left: 1px solid var(--border-glass);
+  background: rgba(15, 15, 20, 0.82);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
@@ -559,15 +563,16 @@ async function logout() {
   font-weight: 500;
   color: var(--text-primary);
   text-decoration: none;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   transition: all var(--transition-fast);
   cursor: pointer;
   font-family: inherit;
 }
 
 .drawer-link:hover {
-  background: var(--bg-glass-hover);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .drawer-link--cta {
@@ -589,7 +594,26 @@ async function logout() {
 
 .drawer-link--subtle:hover {
   color: var(--text-primary);
-  background: var(--bg-glass);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.drawer-divider {
+  height: 1px;
+  background: var(--border-glass);
+  margin: 0.25rem 0;
+}
+
+.drawer-link--signout {
+  background: none;
+  border-color: transparent;
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+}
+
+.drawer-link--signout:hover {
+  color: var(--destructive);
+  background: var(--destructive-soft);
+  border-color: rgba(239, 68, 68, 0.15);
 }
 
 .drawer-enter-active,
