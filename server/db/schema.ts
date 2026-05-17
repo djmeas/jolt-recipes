@@ -13,6 +13,7 @@ export const users = sqliteTable('users', {
 export const recipes = sqliteTable('recipes', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   title: text('title').notNull(),
+  description: text('description'),
   ingredients: text('ingredients').notNull(),
   instructions: text('instructions').notNull(),
   imageUrl: text('image_url'),

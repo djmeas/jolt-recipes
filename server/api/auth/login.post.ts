@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   if (!parseResult.success) {
     throw createError({
       statusCode: 400,
-      message: parseResult.error.errors.map((e) => e.message).join(', ')
+      message: parseResult.error.issues.map((e: { message: string }) => e.message).join(', ')
     })
   }
 

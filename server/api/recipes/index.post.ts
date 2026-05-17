@@ -5,6 +5,7 @@ import { recipes, tags, recipeTags } from '../../db/schema'
 
 const bodySchema = z.object({
   title: z.string().min(1, 'Title is required'),
+  description: z.string().optional(),
   ingredients: z.string().min(1, 'Ingredients are required'),
   instructions: z.string().min(1, 'Instructions are required'),
   imageUrl: z.string().url('Invalid URL').or(z.literal('')).optional(),
@@ -15,8 +16,8 @@ const bodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
-  const user = await getUserSession(event)
-  if (!user?.isAdmin) {
+  const session = await getUserSession(event)
+  if (!session?.user?.isAdmin) {
     throw createError({ statusCode: 403, message: 'Admin access required' })
   }
 
@@ -30,12 +31,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { title, ingredients, instructions, imageUrl, prepTime, cookTime, tagNames } = parseResult.data
+  const { title, description, ingredients, instructions, imageUrl, prepTime, cookTime, tagNames } = parseResult.data
 
   const [recipe] = await db
     .insert(recipes)
     .values({
       title,
+      description: description ?? null,
       ingredients,
       instructions,
       imageUrl: imageUrl || null,

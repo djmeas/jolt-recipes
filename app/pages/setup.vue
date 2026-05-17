@@ -4,38 +4,56 @@ definePageMeta({
 })
 
 const { fetch: refreshSession } = useUserSession()
-const credentials = reactive({
+const router = useRouter()
+
+const { data: setupStatus } = await useFetch<{ setupComplete: boolean }>('/api/auth/setup-status')
+
+if (setupStatus.value?.setupComplete) {
+  await navigateTo('/login')
+}
+
+const form = reactive({
   email: '',
   password: ''
 })
 const error = ref('')
 
-async function login() {
+async function createAdmin() {
   error.value = ''
   try {
+    await $fetch('/api/auth/setup', {
+      method: 'POST',
+      body: {
+        email: form.email,
+        password: form.password
+      }
+    })
     await $fetch('/api/auth/login', {
       method: 'POST',
-      body: credentials
+      body: {
+        email: form.email,
+        password: form.password
+      }
     })
     await refreshSession()
     await navigateTo('/recipes')
   } catch (e: unknown) {
     const err = e as { data?: { message?: string } }
-    error.value = err?.data?.message ?? 'Login failed'
+    error.value = err?.data?.message ?? 'Setup failed'
   }
 }
 </script>
 
 <template>
-  <div class="login-page">
-    <div class="login-glow" />
-    <div class="login-card glass-card-static anim-fade-up">
-      <div class="login-header">
-        <span class="login-icon">🍳</span>
-        <h1 class="login-title">Welcome back</h1>
-        <p class="login-subtitle">Sign in to manage your recipes</p>
+  <div class="setup-page">
+    <div class="setup-glow" />
+    <div class="setup-card glass-card-static anim-fade-up">
+      <div class="setup-header">
+        <span class="setup-icon">🍳</span>
+        <h1 class="setup-title">Welcome to Carly's Recipes</h1>
+        <p class="setup-subtitle">Create your admin account to get started</p>
       </div>
-      <form @submit.prevent="login" class="login-form">
+      <form @submit.prevent="createAdmin" class="setup-form">
         <div v-if="error" class="error-toast">
           {{ error }}
         </div>
@@ -43,9 +61,9 @@ async function login() {
           <label for="email" class="ios-label">Email</label>
           <input
             id="email"
-            v-model="credentials.email"
+            v-model="form.email"
             type="email"
-            placeholder="you@example.com"
+            placeholder="carly@example.com"
             required
             autocomplete="email"
             class="ios-input"
@@ -55,27 +73,25 @@ async function login() {
           <label for="password" class="ios-label">Password</label>
           <input
             id="password"
-            v-model="credentials.password"
+            v-model="form.password"
             type="password"
-            placeholder="Your password"
+            placeholder="At least 8 characters"
             required
-            autocomplete="current-password"
+            minlength="8"
+            autocomplete="new-password"
             class="ios-input"
           >
         </div>
-        <button type="submit" class="ios-btn ios-btn-primary login-btn">
-          Sign in
+        <button type="submit" class="ios-btn ios-btn-primary setup-btn">
+          Create Admin Account
         </button>
       </form>
-      <div class="login-footer">
-        <NuxtLink to="/setup" class="setup-link">First time? Create admin account</NuxtLink>
-      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.login-page {
+.setup-page {
   min-height: calc(100vh - 56px - 64px);
   display: flex;
   align-items: center;
@@ -85,38 +101,38 @@ async function login() {
   overflow: hidden;
 }
 
-.login-glow {
+.setup-glow {
   position: absolute;
-  top: 10%;
+  top: 20%;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, rgba(244, 114, 182, 0.15) 40%, transparent 70%);
   filter: blur(60px);
-  opacity: 0.3;
+  opacity: 0.4;
   pointer-events: none;
 }
 
-.login-card {
+.setup-card {
   width: 100%;
-  max-width: 24rem;
+  max-width: 26rem;
   padding: 2rem;
   position: relative;
 }
 
-.login-header {
+.setup-header {
   text-align: center;
   margin-bottom: 1.75rem;
 }
 
-.login-icon {
-  font-size: 2rem;
+.setup-icon {
+  font-size: 2.5rem;
   display: block;
   margin-bottom: 0.75rem;
 }
 
-.login-title {
+.setup-title {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
@@ -124,13 +140,13 @@ async function login() {
   margin-bottom: 0.375rem;
 }
 
-.login-subtitle {
+.setup-subtitle {
   font-size: 0.8125rem;
   color: var(--text-secondary);
   font-weight: 300;
 }
 
-.login-form {
+.setup-form {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -141,29 +157,11 @@ async function login() {
   flex-direction: column;
 }
 
-.login-btn {
+.setup-btn {
   width: 100%;
   margin-top: 0.5rem;
   padding: 0.875rem;
   border-radius: var(--radius-md);
   font-size: 1rem;
-}
-
-.login-footer {
-  margin-top: 1.5rem;
-  text-align: center;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--border-glass);
-}
-
-.setup-link {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.setup-link:hover {
-  color: var(--accent);
 }
 </style>

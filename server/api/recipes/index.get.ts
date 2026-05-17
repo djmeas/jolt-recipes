@@ -54,6 +54,7 @@ export default defineEventHandler(async (event) => {
     const recipeRows = await db.query.recipes.findMany({
       where: or(
         like(recipes.title, pattern),
+        like(recipes.description, pattern),
         like(recipes.ingredients, pattern),
         like(recipes.instructions, pattern)
       ),
@@ -108,6 +109,7 @@ export default defineEventHandler(async (event) => {
   const matchedSearch = await db.query.recipes.findMany({
     where: or(
       like(recipes.title, pattern),
+      like(recipes.description, pattern),
       like(recipes.ingredients, pattern),
       like(recipes.instructions, pattern)
     ),

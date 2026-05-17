@@ -4,8 +4,8 @@ import { recipes, recipeTags } from '../../db/schema'
 
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
-  const user = await getUserSession(event)
-  if (!user?.isAdmin) {
+  const session = await getUserSession(event)
+  if (!session?.user?.isAdmin) {
     throw createError({ statusCode: 403, message: 'Admin access required' })
   }
 

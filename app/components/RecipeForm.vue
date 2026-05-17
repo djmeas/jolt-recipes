@@ -2,6 +2,7 @@
 const props = defineProps<{
   initialData?: {
     title: string
+    description: string
     ingredients: string
     instructions: string
     imageUrl: string
@@ -14,6 +15,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   submit: [data: {
     title: string
+    description: string
     ingredients: string
     instructions: string
     imageUrl: string
@@ -24,6 +26,7 @@ const emit = defineEmits<{
 }>()
 
 const title = ref(props.initialData?.title ?? '')
+const description = ref(props.initialData?.description ?? '')
 const ingredients = ref(props.initialData?.ingredients ?? '')
 const instructions = ref(props.initialData?.instructions ?? '')
 const imageUrl = ref(props.initialData?.imageUrl ?? '')
@@ -70,6 +73,7 @@ function onSubmit() {
   }
   emit('submit', {
     title: title.value,
+    description: description.value,
     ingredients: ingredients.value,
     instructions: instructions.value,
     imageUrl: imageUrl.value,
@@ -81,131 +85,237 @@ function onSubmit() {
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit" class="space-y-6">
-    <div v-if="error" class="p-3 rounded-lg bg-red-50 text-red-600 text-sm">
+  <form @submit.prevent="onSubmit" class="recipe-form">
+    <div v-if="error" class="error-toast">
       {{ error }}
     </div>
 
-    <div>
-      <label for="title" class="block text-sm font-medium text-stone-700 mb-1.5">Title</label>
+    <div class="form-group">
+      <label for="title" class="ios-label">Title</label>
       <input
         id="title"
         v-model="title"
         type="text"
         placeholder="Grandma's Apple Pie"
         required
-        class="w-full px-4 py-3 rounded-lg border border-amber-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+        class="ios-input"
       >
     </div>
 
-    <div>
-      <label for="imageUrl" class="block text-sm font-medium text-stone-700 mb-1.5">Image URL</label>
+    <div class="form-group">
+      <label for="description" class="ios-label">Description</label>
+      <textarea
+        id="description"
+        v-model="description"
+        rows="3"
+        placeholder="A short summary of this recipe..."
+        class="ios-input ios-textarea"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="imageUrl" class="ios-label">Image URL</label>
       <input
         id="imageUrl"
         v-model="imageUrl"
         type="url"
         placeholder="https://example.com/photo.jpg"
-        class="w-full px-4 py-3 rounded-lg border border-amber-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+        class="ios-input"
       >
     </div>
 
-    <div class="grid sm:grid-cols-2 gap-4">
-      <div>
-        <label for="prepTime" class="block text-sm font-medium text-stone-700 mb-1.5">Prep time (minutes)</label>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="prepTime" class="ios-label">Prep time (min)</label>
         <input
           id="prepTime"
           v-model.number="prepTime"
           type="number"
           min="0"
           placeholder="15"
-          class="w-full px-4 py-3 rounded-lg border border-amber-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+          class="ios-input"
         >
       </div>
-      <div>
-        <label for="cookTime" class="block text-sm font-medium text-stone-700 mb-1.5">Cook time (minutes)</label>
+      <div class="form-group">
+        <label for="cookTime" class="ios-label">Cook time (min)</label>
         <input
           id="cookTime"
           v-model.number="cookTime"
           type="number"
           min="0"
           placeholder="45"
-          class="w-full px-4 py-3 rounded-lg border border-amber-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+          class="ios-input"
         >
       </div>
     </div>
 
-    <div>
-      <label for="ingredients" class="block text-sm font-medium text-stone-700 mb-1.5">Ingredients</label>
-      <p class="text-xs text-stone-500 mb-1.5">One per line, e.g., "2 cups flour"</p>
+    <div class="form-group">
+      <label for="ingredients" class="ios-label">Ingredients</label>
+      <p class="ios-hint">One per line, e.g., "2 cups flour"</p>
       <textarea
         id="ingredients"
         v-model="ingredients"
         rows="8"
         required
         placeholder="2 cups flour&#10;1 tsp salt&#10;1/2 cup butter"
-        class="w-full px-4 py-3 rounded-lg border border-amber-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent font-mono text-sm"
+        class="ios-input ios-textarea"
       />
     </div>
 
-    <div>
-      <label for="instructions" class="block text-sm font-medium text-stone-700 mb-1.5">Instructions</label>
-      <p class="text-xs text-stone-500 mb-1.5">One step per line</p>
+    <div class="form-group">
+      <label for="instructions" class="ios-label">Instructions</label>
+      <p class="ios-hint">One step per line</p>
       <textarea
         id="instructions"
         v-model="instructions"
         rows="8"
         required
         placeholder="Preheat oven to 350°F&#10;Mix dry ingredients&#10;Cut in butter"
-        class="w-full px-4 py-3 rounded-lg border border-amber-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent font-mono text-sm"
+        class="ios-input ios-textarea"
       />
     </div>
 
-    <div>
-      <label class="block text-sm font-medium text-stone-700 mb-1.5">Tags</label>
-      <div class="flex gap-2">
+    <div class="form-group">
+      <label class="ios-label">Tags</label>
+      <div class="tag-input-row">
         <input
           v-model="newTag"
           type="text"
           placeholder="Type a tag and press Enter"
-          class="flex-1 px-4 py-2.5 rounded-lg border border-amber-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"
+          class="ios-input tag-input"
           @keydown.enter.prevent="addTag()"
         >
-        <button
-          type="button"
-          @click="addTag()"
-          class="px-3 py-2.5 rounded-lg border border-amber-200 text-amber-700 hover:bg-amber-100 transition-colors text-sm"
-        >
+        <button type="button" @click="addTag()" class="ios-btn ios-btn-ghost tag-add-btn">
           Add
         </button>
       </div>
-      <div v-if="suggestions.length" class="mt-2 flex flex-wrap gap-1.5">
+      <div v-if="suggestions.length" class="tag-suggestions">
         <button
           v-for="s in suggestions"
           :key="s"
           type="button"
           @click="addTag(s)"
-          class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs hover:bg-amber-200 transition-colors"
+          class="tag-suggestion"
         >
           + {{ s }}
         </button>
       </div>
-      <div v-if="tagNames.length" class="mt-3 flex flex-wrap gap-1.5">
+      <div v-if="tagNames.length" class="tag-chips">
         <span
           v-for="(tag, i) in tagNames"
           :key="tag"
-          class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-800 text-sm"
+          class="tag-chip"
         >
           {{ tag }}
-          <button type="button" @click="removeTag(i)" class="hover:text-red-600">&times;</button>
+          <button type="button" @click="removeTag(i)" class="tag-remove">&times;</button>
         </span>
       </div>
     </div>
 
-    <button
-      type="submit"
-      class="w-full py-3 px-4 rounded-lg bg-amber-700 text-amber-50 font-semibold hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors"
-    >
+    <button type="submit" class="ios-btn ios-btn-primary submit-btn">
       <slot name="submitLabel">Save Recipe</slot>
     </button>
   </form>
 </template>
+
+<style scoped>
+.recipe-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.tag-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tag-input {
+  flex: 1;
+  font-size: 0.8125rem;
+}
+
+.tag-add-btn {
+  white-space: nowrap;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+}
+
+.tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.tag-suggestion {
+  padding: 0.1875rem 0.5rem;
+  border-radius: 100px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid rgba(255, 107, 53, 0.12);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-body);
+}
+
+.tag-suggestion:hover {
+  background: rgba(255, 107, 53, 0.22);
+}
+
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.625rem;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: var(--bg-glass-hover);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  line-height: 1;
+  transition: color var(--transition-fast);
+}
+
+.tag-remove:hover {
+  color: var(--destructive);
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+}
+</style>

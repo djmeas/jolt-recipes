@@ -14,6 +14,7 @@ const initialData = computed(() =>
   recipe.value
     ? {
         title: recipe.value.title,
+        description: recipe.value.description ?? '',
         ingredients: recipe.value.ingredients,
         instructions: recipe.value.instructions,
         imageUrl: recipe.value.imageUrl ?? '',
@@ -26,6 +27,7 @@ const initialData = computed(() =>
 
 async function updateRecipe(data: {
   title: string
+  description: string
   ingredients: string
   instructions: string
   imageUrl: string
@@ -48,22 +50,93 @@ async function updateRecipe(data: {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <NuxtLink :to="`/recipes/${id}`" class="text-sm text-stone-500 hover:text-amber-700 transition-colors">
-      &larr; Back to recipe
-    </NuxtLink>
-    <h1 class="mt-4 text-2xl font-serif font-bold text-amber-900">Edit Recipe</h1>
-    <div v-if="error" class="mt-4 p-3 rounded-lg bg-red-50 text-red-600 text-sm">
+  <div class="form-page">
+    <div class="form-nav anim-fade-up">
+      <NuxtLink :to="`/recipes/${id}`" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to recipe
+      </NuxtLink>
+    </div>
+    <h1 class="form-title anim-fade-up anim-delay-1">Edit Recipe</h1>
+    <div v-if="error" class="error-toast anim-fade-up anim-delay-1">
       {{ error }}
     </div>
-    <div v-if="initialData" class="mt-6">
+    <div v-if="initialData" class="form-card glass-card-static anim-fade-up anim-delay-2">
       <RecipeForm :initial-data="initialData" @submit="updateRecipe">
         <template #submitLabel>Update Recipe</template>
       </RecipeForm>
     </div>
-    <div v-else class="text-center py-16">
-      <p class="text-5xl mb-4">&#127858;</p>
-      <p class="text-stone-500">Recipe not found.</p>
+    <div v-else class="empty-state">
+      <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <p class="empty-text">Recipe not found.</p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.form-page {
+  padding: 1.5rem;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .form-page { padding: 2rem; }
+}
+
+.form-nav {
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-left: -0.75rem;
+}
+
+.back-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-glass);
+}
+
+.form-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+}
+
+.form-card {
+  padding: 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .form-card { padding: 2rem; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+}
+
+.empty-icon {
+  color: var(--text-tertiary);
+  margin-bottom: 1rem;
+  opacity: 0.4;
+}
+
+.empty-text {
+  color: var(--text-secondary);
+}
+</style>
