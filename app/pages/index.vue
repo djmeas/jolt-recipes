@@ -3,12 +3,44 @@ const config = useRuntimeConfig()
 const siteName = config.public.siteName || 'Jolt Recipes'
 const [firstWord, ...rest] = siteName.split(' ')
 const remainingWords = rest.join(' ')
+
+// Generate 40 static particles (no randomness in template to avoid hydration mismatch)
+const particles = Array.from({ length: 40 }, (_, i) => ({
+  id: i,
+  size: [2, 3, 4, 5, 6][i % 5],
+  left: (i * 2.5) % 100,
+  top: (i * 7.3) % 100,
+  delay: (i * 0.7) % 8,
+  duration: 6 + (i % 6),
+  drift: (i % 3) - 1,
+  opacity: 0.15 + (i % 4) * 0.1
+}))
 </script>
 
 <template>
   <div class="landing">
     <div class="landing-hero">
       <div class="hero-glow" />
+
+      <!-- emerald particles -->
+      <div class="particles" aria-hidden="true">
+        <div
+          v-for="p in particles"
+          :key="p.id"
+          class="particle"
+          :style="{
+            width: p.size + 'px',
+            height: p.size + 'px',
+            left: p.left + '%',
+            top: p.top + '%',
+            animationDelay: p.delay + 's',
+            animationDuration: p.duration + 's',
+            opacity: p.opacity,
+            '--drift': p.drift + 'px'
+          }"
+        />
+      </div>
+
       <div class="hero-content anim-fade-up">
         <div class="hero-badge">Personal Cookbook</div>
         <h1 class="hero-title anim-fade-up anim-delay-1">
@@ -86,6 +118,46 @@ const remainingWords = rest.join(' ')
   filter: blur(80px);
   opacity: 0.5;
   pointer-events: none;
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 0 6px var(--accent),
+    0 0 12px var(--accent-soft);
+  animation: particleFloat var(--duration, 6s) ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--particle-opacity, 0.4);
+  }
+  50% {
+    transform: translateY(-30px) translateX(var(--drift, 0));
+    opacity: var(--particle-opacity, 0.4);
+  }
+  90% {
+    opacity: var(--particle-opacity, 0.4);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
 }
 
 .hero-content {
