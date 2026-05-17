@@ -5,6 +5,8 @@ definePageMeta({
 
 const { fetch: refreshSession } = useUserSession()
 const router = useRouter()
+const config = useRuntimeConfig()
+const siteName = config.public.siteName || 'Jolt Recipes'
 
 const { data: setupStatus } = await useFetch<{ setupComplete: boolean }>('/api/auth/setup-status')
 
@@ -49,8 +51,17 @@ async function createAdmin() {
     <div class="setup-glow" />
     <div class="setup-card glass-card-static anim-fade-up">
       <div class="setup-header">
-        <span class="setup-icon">🍳</span>
-        <h1 class="setup-title">Welcome to Carly's Recipes</h1>
+        <span class="setup-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 2v7a1.5 1.5 0 0 0 1.5 1.5v10.5" />
+            <path d="M9 2v5" />
+            <path d="M5 2v5" />
+            <path d="M5 7h4" />
+            <path d="M18 2c-1.5 0-2 2.5-2 5 0 2.5 1 3 2 3.5v9.5" />
+            <path d="M18 2c1.5 0 2 2.5 2 5 0 2.5-1 3-2 3.5" />
+          </svg>
+        </span>
+        <h1 class="setup-title">Welcome to {{ siteName }}</h1>
         <p class="setup-subtitle">Create your admin account to get started</p>
       </div>
       <form @submit.prevent="createAdmin" class="setup-form">
@@ -63,7 +74,7 @@ async function createAdmin() {
             id="email"
             v-model="form.email"
             type="email"
-            placeholder="carly@example.com"
+            placeholder="jolt@example.com"
             required
             autocomplete="email"
             class="ios-input"
@@ -127,9 +138,11 @@ async function createAdmin() {
 }
 
 .setup-icon {
-  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--accent);
   display: block;
-  margin-bottom: 0.75rem;
+  margin: 0 auto 0.75rem;
 }
 
 .setup-title {

@@ -2,6 +2,8 @@
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+const config = useRuntimeConfig()
+const siteName = config.public.siteName || 'Jolt Recipes'
 
 async function submit() {
   error.value = ''
@@ -27,7 +29,7 @@ async function submit() {
       <div class="gate-icon">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
-      <h1 class="gate-title">Carly's Recipes</h1>
+      <h1 class="gate-title">{{ siteName }}</h1>
       <p class="gate-subtitle">Enter the site password to continue</p>
 
       <form @submit.prevent="submit" class="gate-form">

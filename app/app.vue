@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { loggedIn, user, clear: clearSession } = useUserSession()
+const config = useRuntimeConfig()
+const siteName = config.public.siteName || 'Jolt Recipes'
 
 async function logout() {
   await $fetch('/api/auth/logout', { method: 'POST' })
@@ -23,7 +25,7 @@ async function logout() {
               <path d="M18 2c1.5 0 2 2.5 2 5 0 2.5-1 3-2 3.5" />
             </svg>
           </span>
-          <span class="logo-text">Carly's Recipes</span>
+          <span class="logo-text">{{ siteName }}</span>
         </NuxtLink>
         <nav class="nav-links">
           <NuxtLink to="/recipes" class="nav-link">
@@ -59,7 +61,7 @@ async function logout() {
       <NuxtPage />
     </main>
     <footer class="app-footer">
-      <p>Made with love for Carly</p>
+      <p>Made with love for you</p>
     </footer>
   </div>
 </template>

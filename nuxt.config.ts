@@ -4,6 +4,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['nuxt-auth-utils', '@nuxtjs/tailwindcss'],
   runtimeConfig: {
-    sitePassword: process.env.SITE_PASSWORD || ''
+    // Set via NUXT_SITE_PASSWORD env var at runtime (for Docker/server)
+    sitePassword: '',
+    public: {
+      // Set via NUXT_PUBLIC_SITE_NAME env var at runtime (for Docker/client)
+      siteName: 'Jolt Recipes'
+    }
   }
 })

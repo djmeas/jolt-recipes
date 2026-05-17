@@ -6,7 +6,8 @@ const bodySchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const sitePassword = process.env.SITE_PASSWORD || ''
+  const config = useRuntimeConfig()
+  const sitePassword = config.sitePassword
 
   if (!sitePassword) {
     setCookie(event, 'site-auth', '1', {

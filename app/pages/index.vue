@@ -1,4 +1,8 @@
 <script setup lang="ts">
+const config = useRuntimeConfig()
+const siteName = config.public.siteName || 'Jolt Recipes'
+const [firstWord, ...rest] = siteName.split(' ')
+const remainingWords = rest.join(' ')
 </script>
 
 <template>
@@ -8,7 +12,7 @@
       <div class="hero-content anim-fade-up">
         <div class="hero-badge">Personal Cookbook</div>
         <h1 class="hero-title anim-fade-up anim-delay-1">
-          Carly's<br><span class="hero-title-accent">Recipes</span>
+          {{ firstWord }}<br><span class="hero-title-accent">{{ remainingWords || '' }}</span>
         </h1>
         <p class="hero-subtitle anim-fade-up anim-delay-2">
           A curated collection of favorite recipes,<br>always just a tap away.
