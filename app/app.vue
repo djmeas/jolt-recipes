@@ -2,10 +2,12 @@
 const { loggedIn, user, clear: clearSession } = useUserSession()
 const config = useRuntimeConfig()
 const siteName = config.public.siteName || 'Jolt Recipes'
+const mobileMenuOpen = ref(false)
 
 async function logout() {
   await $fetch('/api/auth/logout', { method: 'POST' })
   await clearSession()
+  mobileMenuOpen.value = false
   await navigateTo('/recipes')
 }
 </script>
@@ -28,33 +30,87 @@ async function logout() {
           <span class="logo-text">{{ siteName }}</span>
         </NuxtLink>
         <nav class="nav-links">
-          <NuxtLink to="/recipes" class="nav-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            Browse
-          </NuxtLink>
-          <NuxtLink
-            v-if="loggedIn"
-            to="/recipes/new"
-            class="nav-cta"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Recipe
-          </NuxtLink>
+          <!-- desktop links always visible -->
+          <div class="desktop-nav">
+            <NuxtLink to="/recipes" class="nav-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              Browse
+            </NuxtLink>
+            <NuxtLink
+              v-if="loggedIn"
+              to="/dashboard"
+              class="nav-link"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              Dashboard
+            </NuxtLink>
+            <NuxtLink
+              v-if="loggedIn"
+              to="/recipes/new"
+              class="nav-cta"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Recipe
+            </NuxtLink>
+            <button
+              v-if="loggedIn"
+              @click="logout"
+              class="nav-link nav-link--subtle"
+            >
+              Sign out
+            </button>
+            <NuxtLink
+              v-if="!loggedIn"
+              to="/login"
+              class="nav-link nav-link--subtle"
+            >
+              Sign in
+            </NuxtLink>
+          </div>
+
+          <!-- mobile hamburger -->
           <button
-            v-if="loggedIn"
-            @click="logout"
-            class="nav-link nav-link--subtle"
+            class="hamburger mobile-only"
+            aria-label="Toggle navigation"
+            @click="mobileMenuOpen = !mobileMenuOpen"
           >
-            Sign out
+            <svg v-if="!mobileMenuOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+            <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
           </button>
-          <NuxtLink
-            v-if="!loggedIn"
-            to="/login"
-            class="nav-link nav-link--subtle"
-          >
-            Sign in
-          </NuxtLink>
         </nav>
+
+        <!-- mobile drawer overlay -->
+        <transition name="drawer">
+          <div v-if="mobileMenuOpen" class="mobile-drawer" @click.self="mobileMenuOpen = false">
+            <div class="mobile-drawer-inner">
+              <NuxtLink to="/recipes" class="drawer-link" @click="mobileMenuOpen = false">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Browse
+              </NuxtLink>
+              <NuxtLink v-if="loggedIn" to="/dashboard" class="drawer-link" @click="mobileMenuOpen = false">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Dashboard
+              </NuxtLink>
+              <NuxtLink v-if="loggedIn" to="/recipes/new" class="drawer-link drawer-link--cta" @click="mobileMenuOpen = false">
+                Add Recipe
+              </NuxtLink>
+              <button v-if="loggedIn" class="drawer-link" @click="logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign out
+              </button>
+              <NuxtLink v-if="!loggedIn" to="/login" class="drawer-link drawer-link--subtle" @click="mobileMenuOpen = false">
+                Sign in
+              </NuxtLink>
+            </div>
+          </div>
+        </transition>
       </div>
     </header>
     <main class="app-main">
@@ -70,7 +126,7 @@ async function logout() {
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=SF+Pro+Display:wght@300;400;500;600&display=swap');
 
 :root {
-  --bg-base: #0f0f14;
+  --bg-base: #0c1412;
   --bg-surface: rgba(255, 255, 255, 0.04);
   --bg-glass: rgba(255, 255, 255, 0.06);
   --bg-glass-hover: rgba(255, 255, 255, 0.10);
@@ -82,17 +138,18 @@ async function logout() {
   --text-primary: rgba(255, 255, 255, 0.92);
   --text-secondary: rgba(255, 255, 255, 0.55);
   --text-tertiary: rgba(255, 255, 255, 0.35);
-  --accent: #ff6b35;
-  --accent-soft: rgba(255, 107, 53, 0.15);
-  --accent-glow: rgba(255, 107, 53, 0.3);
-  --rose: #f472b6;
-  --rose-soft: rgba(244, 114, 182, 0.12);
+  --accent: #10b981;
+  --accent-soft: rgba(16, 185, 129, 0.15);
+  --accent-glow: rgba(16, 185, 129, 0.3);
+  --rose: #34d399;
+  --rose-soft: rgba(52, 211, 153, 0.12);
   --destructive: #ef4444;
   --destructive-soft: rgba(239, 68, 68, 0.12);
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-xl: 28px;
+  --accent-hover: #34d399;
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
   --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -120,10 +177,10 @@ async function logout() {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(255, 107, 53, 0.08), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(244, 114, 182, 0.06), transparent 60%),
-    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(139, 92, 246, 0.04), transparent 50%);
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(16, 185, 129, 0.08), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(110, 231, 183, 0.06), transparent 60%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(52, 211, 153, 0.04), transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -232,7 +289,7 @@ async function logout() {
 }
 
 .nav-cta:hover {
-  background: #ff7d4d;
+  background: var(--accent-hover);
   box-shadow: 0 4px 20px var(--accent-glow);
   transform: translateY(-1px);
 }
@@ -351,7 +408,7 @@ async function logout() {
 }
 
 .ios-btn-primary:hover {
-  background: #ff7d4d;
+  background: var(--accent-hover);
   box-shadow: 0 4px 24px var(--accent-glow);
   transform: translateY(-1px);
 }
@@ -393,7 +450,7 @@ async function logout() {
   letter-spacing: 0.02em;
   background: var(--accent-soft);
   color: var(--accent);
-  border: 1px solid rgba(255, 107, 53, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.12);
 }
 
 .tag-pill--rose {
@@ -432,4 +489,165 @@ async function logout() {
 .anim-delay-3 { animation-delay: 240ms; }
 .anim-delay-4 { animation-delay: 320ms; }
 .anim-delay-5 { animation-delay: 400ms; }
+
+/* Mobile hamburger & drawer */
+.desktop-nav {
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .desktop-nav { display: flex; }
+}
+
+.mobile-only {
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .mobile-only { display: none; }
+}
+
+.hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.hamburger:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+}
+
+.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+}
+
+.mobile-drawer-inner {
+  width: 70%;
+  max-width: 280px;
+  height: 100%;
+  background: rgba(15, 15, 20, 0.82);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 0.5rem;
+}
+
+.drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.drawer-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.drawer-link--cta {
+  background: var(--accent);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.drawer-link--cta:hover {
+  background: var(--accent-hover);
+}
+
+.drawer-link--subtle {
+  background: none;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.drawer-link--subtle:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.drawer-divider {
+  height: 1px;
+  background: var(--border-glass);
+  margin: 0.25rem 0;
+}
+
+.drawer-link--signout {
+  background: none;
+  border-color: transparent;
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+}
+
+.drawer-link--signout:hover {
+  color: var(--destructive);
+  background: var(--destructive-soft);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: opacity 200ms ease;
+}
+
+.drawer-enter-active > .mobile-drawer-inner,
+.drawer-leave-active > .mobile-drawer-inner {
+  transition: transform 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.drawer-enter-from,
+.drawer-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-from > .mobile-drawer-inner,
+.drawer-leave-to > .mobile-drawer-inner {
+  transform: translateX(100%);
+}
+
+.drawer-enter-to,
+.drawer-leave-from {
+  opacity: 1;
+}
+
+.drawer-enter-to > .mobile-drawer-inner,
+.drawer-leave-from > .mobile-drawer-inner {
+  transform: translateX(0);
+}
+
+@media (min-width: 640px) {
+  .mobile-drawer { display: none; }
+}
 </style>

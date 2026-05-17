@@ -266,14 +266,14 @@ function onSubmit() {
   font-weight: 500;
   background: var(--accent-soft);
   color: var(--accent);
-  border: 1px solid rgba(255, 107, 53, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.12);
   cursor: pointer;
   transition: all var(--transition-fast);
   font-family: var(--font-body);
 }
 
 .tag-suggestion:hover {
-  background: rgba(255, 107, 53, 0.22);
+  background: rgba(16, 185, 129, 0.22);
 }
 
 .tag-chips {
