@@ -7,7 +7,7 @@ const bodySchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
   ingredients: z.string().min(1, 'Ingredients are required'),
-  instructions: z.string().min(1, 'Instructions are required'),
+  instructions: z.string().optional(),
   imageUrl: z.string().url('Invalid URL').or(z.literal('')).optional(),
   prepTime: z.number().int().min(0).optional(),
   cookTime: z.number().int().min(0).optional(),
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
       title,
       description: description ?? null,
       ingredients,
-      instructions,
+      instructions: instructions ?? null,
       imageUrl: imageUrl || null,
       prepTime: prepTime ?? null,
       cookTime: cookTime ?? null

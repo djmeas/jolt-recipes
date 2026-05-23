@@ -81,7 +81,7 @@ function formatTime(minutes: number | null | undefined) {
         </h2>
         <ol class="instructions-list">
           <li
-            v-for="(line, i) in recipe.instructions.split('\n').filter((l: string) => l.trim())"
+            v-for="(line, i) in (recipe.instructions ?? '').split('\n').filter((l: string) => l.trim())"
             :key="i"
             class="instruction-item"
           >

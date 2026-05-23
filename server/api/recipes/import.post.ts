@@ -50,10 +50,7 @@ export default defineEventHandler(async (event) => {
       errors.push({ index: i, message: 'Ingredients are required' })
       continue
     }
-    if (!instructions) {
-      errors.push({ index: i, message: 'Instructions are required' })
-      continue
-    }
+
 
     const [recipe] = await db
       .insert(recipes)

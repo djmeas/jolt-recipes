@@ -67,18 +67,14 @@ function onSubmit() {
     error.value = 'Ingredients are required'
     return
   }
-  if (!instructions.value.trim()) {
-    error.value = 'Instructions are required'
-    return
-  }
   emit('submit', {
     title: title.value,
     description: description.value,
     ingredients: ingredients.value,
     instructions: instructions.value,
     imageUrl: imageUrl.value,
-    prepTime: prepTime.value,
-    cookTime: cookTime.value,
+    prepTime: prepTime.value ?? undefined,
+    cookTime: cookTime.value ?? undefined,
     tagNames: tagNames.value
   })
 }
@@ -91,7 +87,7 @@ function onSubmit() {
     </div>
 
     <div class="form-group">
-      <label for="title" class="ios-label">Title</label>
+      <label for="title" class="ios-label">Title <span class="required-asterisk">*</span></label>
       <input
         id="title"
         v-model="title"
@@ -150,7 +146,7 @@ function onSubmit() {
     </div>
 
     <div class="form-group">
-      <label for="ingredients" class="ios-label">Ingredients</label>
+      <label for="ingredients" class="ios-label">Ingredients <span class="required-asterisk">*</span></label>
       <p class="ios-hint">One per line, e.g., "2 cups flour"</p>
       <textarea
         id="ingredients"
@@ -169,7 +165,6 @@ function onSubmit() {
         id="instructions"
         v-model="instructions"
         rows="8"
-        required
         placeholder="Preheat oven to 350°F&#10;Mix dry ingredients&#10;Cut in butter"
         class="ios-input ios-textarea"
       />
@@ -317,5 +312,10 @@ function onSubmit() {
   padding: 0.875rem;
   border-radius: var(--radius-md);
   font-size: 1rem;
+}
+
+.required-asterisk {
+  color: var(--destructive);
+  margin-left: 0.125rem;
 }
 </style>
